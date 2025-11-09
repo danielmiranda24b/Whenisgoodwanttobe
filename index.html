@@ -1,706 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>WhenIsGood-Style Scheduler</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #0f172a;
-      color: #e5e7eb;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Scheduler - Your WhenIsGood Alternative</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    header {
-      padding: 1rem 1.5rem;
-      background: #020617;
-      border-bottom: 1px solid #1f2933;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
 
-    header h1 {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
+        /* Animated background particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
 
-    header small {
-      color: #9ca3af;
-      font-size: 0.75rem;
-    }
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
 
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-    }
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
 
-    .tab-button {
-      border: none;
-      background: #111827;
-      color: #e5e7eb;
-      padding: 0.5rem 0.9rem;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      border: 1px solid transparent;
-    }
+        .container {
+            text-align: center;
+            z-index: 10;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            max-width: 800px;
+            animation: fadeIn 1s ease-in;
+        }
 
-    .tab-button.active {
-      background: #2563eb;
-      border-color: #3b82f6;
-    }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    main {
-      padding: 1rem 1.5rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
 
-    .card {
-      background: #020617;
-      border-radius: 1rem;
-      padding: 1rem;
-      border: 1px solid #1f2933;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
-    }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
 
-    .section-title {
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
+        h1 {
+            color: #fff;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+            background: linear-gradient(45deg, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-    .section-subtitle {
-      font-size: 0.8rem;
-      color: #9ca3af;
-      margin-bottom: 0.75rem;
-    }
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
 
-    label {
-      font-size: 0.85rem;
-      display: block;
-      margin-bottom: 0.25rem;
-    }
+        .highlight {
+            color: #a855f7;
+            font-weight: bold;
+        }
 
-    input[type="text"] {
-      width: 100%;
-      max-width: 250px;
-      padding: 0.4rem 0.5rem;
-      border-radius: 0.5rem;
-      border: 1px solid #374151;
-      background: #020617;
-      color: #e5e7eb;
-      font-size: 0.85rem;
-    }
+        .countdown-container {
+            margin-top: 40px;
+        }
 
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 1px #3b82f6;
-    }
+        .countdown {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 15px;
+        }
 
-    .grid-wrapper {
-      overflow-x: auto;
-      margin-top: 1rem;
-    }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
 
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      min-width: 900px;
-      font-size: 0.75rem;
-    }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+            border-radius: 10px;
+            animation: progress 5s linear forwards;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+        }
 
-    th, td {
-      border: 1px solid #111827;
-      padding: 0.25rem 0.4rem;
-      text-align: center;
-    }
+        @keyframes progress {
+            from {
+                width: 0%;
+            }
+            to {
+                width: 100%;
+            }
+        }
 
-    th {
-      position: sticky;
-      top: 0;
-      background: #020617;
-      z-index: 1;
-    }
+        .manual-link {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    .time-col {
-      position: sticky;
-      left: 0;
-      background: #020617;
-      z-index: 2;
-      text-align: right;
-      padding-right: 0.5rem;
-      font-weight: 500;
-    }
+        .manual-link a {
+            color: #a855f7;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+            border: 2px solid #a855f7;
+            border-radius: 10px;
+            display: inline-block;
+        }
 
-    .slot {
-      cursor: pointer;
-      min-width: 40px;
-      transition: background 0.12s ease, transform 0.05s ease;
-      user-select: none;
-    }
+        .manual-link a:hover {
+            background: #a855f7;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(168, 85, 247, 0.4);
+        }
 
-    .slot.available {
-      background: #22c55e33;
-      box-shadow: inset 0 0 0 1px #22c55eaa;
-    }
+        /* Grid background effect */
+        .grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
 
-    .slot.available:hover {
-      background: #22c55e55;
-      transform: scale(1.02);
-    }
-
-    .slot:hover {
-      background: #1f2933;
-    }
-
-    .slot-count-0 {
-      background: #030712;
-      color: #4b5563;
-    }
-
-    .slot-count-1 {
-      background: #0f766e33;
-      color: #a7f3d0;
-    }
-
-    .slot-count-2 {
-      background: #22c55e33;
-      color: #bbf7d0;
-    }
-
-    .slot-count-3plus {
-      background: #22c55e66;
-      color: #ecfdf5;
-      font-weight: 600;
-    }
-
-    .controls {
-      margin-top: 0.75rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    button {
-      border-radius: 999px;
-      border: none;
-      padding: 0.45rem 0.9rem;
-      font-size: 0.8rem;
-      cursor: pointer;
-      background: #2563eb;
-      color: #e5e7eb;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    button.secondary {
-      background: #111827;
-      border: 1px solid #374151;
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-
-    .pill {
-      font-size: 0.7rem;
-      background: #111827;
-      padding: 0.25rem 0.6rem;
-      border-radius: 999px;
-      border: 1px solid #1f2933;
-      color: #9ca3af;
-    }
-
-    .legend {
-      margin-top: 0.75rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      font-size: 0.7rem;
-      color: #9ca3af;
-    }
-
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    .legend-swatch {
-      width: 16px;
-      height: 10px;
-      border-radius: 999px;
-      border: 1px solid #0b1120;
-    }
-
-    .swatch-0 { background: #030712; }
-    .swatch-1 { background: #0f766e33; }
-    .swatch-2 { background: #22c55e33; }
-    .swatch-3 { background: #22c55e66; }
-
-    .small {
-      font-size: 0.7rem;
-      color: #9ca3af;
-      margin-top: 0.25rem;
-    }
-
-    .notice {
-      margin-top: 0.75rem;
-      font-size: 0.75rem;
-      color: #9ca3af;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      font-size: 0.7rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 999px;
-      background: #111827;
-      border: 1px solid #1f2933;
-      color: #9ca3af;
-    }
-
-    .tag span.dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: #22c55e;
-    }
-
-    @media (max-width: 640px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-      }
-    }
-  </style>
+        @keyframes gridMove {
+            0% {
+                transform: perspective(500px) rotateX(60deg) translateY(0);
+            }
+            100% {
+                transform: perspective(500px) rotateX(60deg) translateY(50px);
+            }
+        }
+    </style>
 </head>
 <body>
-<header>
-  <div>
-    <h1>Simple WhenIsGood-Style Scheduler</h1>
-    <small>Range: Nov 9–17, 2025 · 7:00–21:00 · 30-minute slots</small>
-  </div>
-  <div class="tabs">
-    <button class="tab-button active" data-tab="input">Enter Availability</button>
-    <button class="tab-button" data-tab="group">Group View</button>
-  </div>
-</header>
+    <div class="grid"></div>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="icon">📅</div>
+        <h1>Practice Scheduler</h1>
+        <div class="subtitle">
+            Since <span class="highlight">WhenIsGood</span> scheduler is down,<br>
+            I decided to make my own version.
+        </div>
+        
+        <div class="countdown-container">
+            <div class="countdown">
+                Redirecting in <span id="countdown">5</span> seconds...
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
 
-<main>
-  <div id="tab-input" class="card">
-    <div class="section-title">Step 1 – Mark your availability</div>
-    <div class="section-subtitle">
-      Type your name, then click on each time slot that works for you. Green = available.
+        <div class="manual-link">
+            <a href="https://carlosmada.github.io/Practice-Scheduler/" id="manualLink">
+                Click here if not redirected automatically
+            </a>
+        </div>
     </div>
 
-    <label for="nameInput">Your name</label>
-    <input type="text" id="nameInput" placeholder="e.g., Kevin" />
-
-    <div class="small">
-      Tip: This demo stores everything in <code>localStorage</code> only. For full multi-user support,
-      plug this into a real backend (API / DB).
-    </div>
-
-    <div class="grid-wrapper" id="inputGrid"></div>
-
-    <div class="controls">
-      <button id="saveAvailabilityBtn">Save availability</button>
-      <button class="secondary" id="clearSelectionBtn">Clear selection</button>
-      <button class="secondary" id="resetAllBtn">Reset all data</button>
-      <span class="pill" id="statusPill">No data saved yet</span>
-    </div>
-  </div>
-
-  <div id="tab-group" class="card" style="display:none;">
-    <div class="section-title">Step 2 – Group availability</div>
-    <div class="section-subtitle">
-      Each cell shows how many people are available. Click a cell to see who.
-    </div>
-
-    <div class="tag">
-      <span class="dot"></span>
-      <span>Best slots = highest numbers (everyone free)</span>
-    </div>
-
-    <div class="grid-wrapper" id="groupGrid" style="margin-top:0.75rem;"></div>
-
-    <div class="legend">
-      <div class="legend-item">
-        <span class="legend-swatch swatch-0"></span><span>0 available</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-swatch swatch-1"></span><span>1 available</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-swatch swatch-2"></span><span>2 available</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-swatch swatch-3"></span><span>3+ available</span>
-      </div>
-    </div>
-
-    <div class="notice" id="groupNotice"></div>
-  </div>
-</main>
-
-<script>
-  // ---------- CONFIG ----------
-  const START_DATE = "2025-11-09";
-  const END_DATE   = "2025-11-17";
-  const START_HOUR = 7;   // 7 AM
-  const END_HOUR   = 21;  // 9 PM
-  const SLOT_MIN   = 30;  // minutes per slot
-
-  const STORAGE_KEY = "simple_whenisgood_availability_v1";
-
-  // ---------- UTILITIES ----------
-  function dateRange(startStr, endStr) {
-    const dates = [];
-    const start = new Date(startStr + "T00:00:00");
-    const end   = new Date(endStr   + "T00:00:00");
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      dates.push(`${yyyy}-${mm}-${dd}`);
-    }
-    return dates;
-  }
-
-  function formatDateLabel(iso) {
-    const d = new Date(iso + "T00:00:00");
-    const weekday = d.toLocaleDateString(undefined, { weekday: "short" });
-    const month = d.toLocaleDateString(undefined, { month: "short" });
-    const day = d.getDate();
-    return `${weekday} ${month} ${day}`;
-  }
-
-  function formatTimeLabel(hour, minute) {
-    const d = new Date();
-    d.setHours(hour, minute, 0, 0);
-    return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-  }
-
-  function generateSlots() {
-    const slots = [];
-    for (let h = START_HOUR; h < END_HOUR; h++) {
-      for (let m = 0; m < 60; m += SLOT_MIN) {
-        slots.push({ hour: h, minute: m });
-      }
-    }
-    return slots;
-  }
-
-  function makeSlotId(dateStr, hour, minute) {
-    const hh = String(hour).padStart(2, "0");
-    const mm = String(minute).padStart(2, "0");
-    return `${dateStr}T${hh}:${mm}`;
-  }
-
-  function loadData() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return [];
-      return parsed;
-    } catch (e) {
-      console.error("Error parsing stored availability:", e);
-      return [];
-    }
-  }
-
-  function saveData(arr) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-  }
-
-  // ---------- GLOBALS ----------
-  const dates = dateRange(START_DATE, END_DATE);
-  const slots = generateSlots();
-  let availableSlots = new Set(); // currently selected slots for the active user
-  let allUsers = loadData();      // [{ name, slots: [slotId, ...] }, ...]
-  let slotIndexMap = new Map();   // slotId -> {row, col} for input grid
-  let lastClickedSlotId = null;   // last clicked slot for Shift+click
-
-  const inputGridEl = document.getElementById("inputGrid");
-  const groupGridEl = document.getElementById("groupGrid");
-  const statusPillEl = document.getElementById("statusPill");
-  const groupNoticeEl = document.getElementById("groupNotice");
-
-  const nameInputEl = document.getElementById("nameInput");
-  const saveBtn = document.getElementById("saveAvailabilityBtn");
-  const clearSelectionBtn = document.getElementById("clearSelectionBtn");
-  const resetAllBtn = document.getElementById("resetAllBtn");
-
-  // ---------- TABS ----------
-  document.querySelectorAll(".tab-button").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const tab = btn.dataset.tab;
-      document.querySelectorAll(".tab-button").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-
-      document.getElementById("tab-input").style.display = tab === "input" ? "block" : "none";
-      document.getElementById("tab-group").style.display = tab === "group" ? "block" : "none";
-
-      if (tab === "group") {
-        renderGroupGrid();
-      }
-    });
-  });
-
-  // ---------- SLOT SELECTION HELPERS (Shift+click logic) ----------
-  function toggleSlotCell(slotId, cell, forceState = null) {
-    const shouldSelect = forceState !== null ? forceState : !availableSlots.has(slotId);
-
-    if (shouldSelect) {
-      availableSlots.add(slotId);
-      cell.classList.add("available");
-    } else {
-      availableSlots.delete(slotId);
-      cell.classList.remove("available");
-    }
-  }
-
-  function handleSlotClick(event, cell, slotId) {
-    // If Shift is held and we have a previous cell, select a rectangle range
-    if (event.shiftKey && lastClickedSlotId && slotIndexMap.has(lastClickedSlotId) && slotIndexMap.has(slotId)) {
-      const start = slotIndexMap.get(lastClickedSlotId);
-      const end = slotIndexMap.get(slotId);
-
-      const rowStart = Math.min(start.row, end.row);
-      const rowEnd   = Math.max(start.row, end.row);
-      const colStart = Math.min(start.col, end.col);
-      const colEnd   = Math.max(start.col, end.col);
-
-      const targetSelected = availableSlots.has(slotId);
-      const desiredState = !targetSelected; // if target is OFF, we turn all ON, etc.
-
-      for (let r = rowStart; r <= rowEnd; r++) {
-        for (let c = colStart; c <= colEnd; c++) {
-          const currentSlotId = makeSlotId(dates[c], slots[r].hour, slots[r].minute);
-          const cellEl = inputGridEl.querySelector(`.slot[data-slot-id="${currentSlotId}"]`);
-          if (cellEl) {
-            toggleSlotCell(currentSlotId, cellEl, desiredState);
-          }
-        }
-      }
-    } else {
-      // Normal single-cell toggle
-      toggleSlotCell(slotId, cell);
-    }
-
-    lastClickedSlotId = slotId;
-  }
-
-  // ---------- INPUT GRID ----------
-  function renderInputGrid() {
-    const table = document.createElement("table");
-    const thead = document.createElement("thead");
-    const tbody = document.createElement("tbody");
-
-    // reset mapping each render
-    slotIndexMap = new Map();
-
-    // header row
-    const headerRow = document.createElement("tr");
-    const corner = document.createElement("th");
-    corner.textContent = "Time";
-    corner.className = "time-col";
-    headerRow.appendChild(corner);
-
-    dates.forEach((d) => {
-      const th = document.createElement("th");
-      th.textContent = formatDateLabel(d);
-      headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-
-    // body rows
-    slots.forEach(({ hour, minute }, rowIndex) => {
-      const row = document.createElement("tr");
-
-      const timeCell = document.createElement("td");
-      timeCell.textContent = formatTimeLabel(hour, minute);
-      timeCell.className = "time-col";
-      row.appendChild(timeCell);
-
-      dates.forEach((d, colIndex) => {
-        const slotId = makeSlotId(d, hour, minute);
-        const td = document.createElement("td");
-        td.className = "slot";
-        td.dataset.slotId = slotId;
-
-        // store position for Shift+click range
-        slotIndexMap.set(slotId, { row: rowIndex, col: colIndex });
-
-        td.addEventListener("click", (event) => handleSlotClick(event, td, slotId));
-
-        row.appendChild(td);
-      });
-
-      tbody.appendChild(row);
-    });
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    inputGridEl.innerHTML = "";
-    inputGridEl.appendChild(table);
-  }
-
-  function clearCurrentSelection() {
-    availableSlots.clear();
-    lastClickedSlotId = null;
-    inputGridEl.querySelectorAll(".slot.available").forEach((cell) => {
-      cell.classList.remove("available");
-    });
-  }
-
-  // ---------- SAVE / RESET ----------
-  saveBtn.addEventListener("click", () => {
-    const name = nameInputEl.value.trim();
-    if (!name) {
-      alert("Please enter your name before saving.");
-      return;
-    }
-    if (availableSlots.size === 0) {
-      if (!confirm("You have no selected slots. Save an empty availability for this name?")) {
-        return;
-      }
-    }
-
-    const slotsArray = Array.from(availableSlots);
-
-    // Replace existing user with same name (case-insensitive)
-    const idx = allUsers.findIndex((u) => u.name.toLowerCase() === name.toLowerCase());
-    if (idx >= 0) {
-      allUsers[idx] = { name, slots: slotsArray };
-    } else {
-      allUsers.push({ name, slots: slotsArray });
-    }
-
-    saveData(allUsers);
-    statusPillEl.textContent = `Saved for ${name} (${slotsArray.length} slots)`;
-    statusPillEl.style.background = "#14532d";
-    statusPillEl.style.color = "#bbf7d0";
-
-    renderGroupGrid();
-  });
-
-  clearSelectionBtn.addEventListener("click", () => {
-    clearCurrentSelection();
-  });
-
-  resetAllBtn.addEventListener("click", () => {
-    if (!confirm("This will delete ALL saved availability data on this device. Continue?")) return;
-    localStorage.removeItem(STORAGE_KEY);
-    allUsers = [];
-    clearCurrentSelection();
-    statusPillEl.textContent = "No data saved yet";
-    statusPillEl.style.background = "";
-    statusPillEl.style.color = "";
-    renderGroupGrid();
-  });
-
-  // ---------- GROUP GRID ----------
-  function renderGroupGrid() {
-    const table = document.createElement("table");
-    const thead = document.createElement("thead");
-    const tbody = document.createElement("tbody");
-
-    const headerRow = document.createElement("tr");
-    const corner = document.createElement("th");
-    corner.textContent = "Time";
-    corner.className = "time-col";
-    headerRow.appendChild(corner);
-
-    dates.forEach((d) => {
-      const th = document.createElement("th");
-      th.textContent = formatDateLabel(d);
-      headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-
-    // Precompute slot -> names
-    const slotMap = new Map(); // id -> [names...]
-    allUsers.forEach((u) => {
-      (u.slots || []).forEach((slotId) => {
-        if (!slotMap.has(slotId)) slotMap.set(slotId, []);
-        slotMap.get(slotId).push(u.name);
-      });
-    });
-
-    slots.forEach(({ hour, minute }) => {
-      const row = document.createElement("tr");
-
-      const timeCell = document.createElement("td");
-      timeCell.textContent = formatTimeLabel(hour, minute);
-      timeCell.className = "time-col";
-      row.appendChild(timeCell);
-
-      dates.forEach((d) => {
-        const slotId = makeSlotId(d, hour, minute);
-        const td = document.createElement("td");
-        td.className = "slot";
-
-        const names = slotMap.get(slotId) || [];
-        const count = names.length;
-        td.textContent = count;
-
-        if (count === 0) {
-          td.classList.add("slot-count-0");
-        } else if (count === 1) {
-          td.classList.add("slot-count-1");
-        } else if (count === 2) {
-          td.classList.add("slot-count-2");
-        } else if (count >= 3) {
-          td.classList.add("slot-count-3plus");
+    <script>
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.width = Math.random() * 10 + 5 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            particlesContainer.appendChild(particle);
         }
 
-        if (count > 0) {
-          td.title = names.join(", ");
-          td.addEventListener("click", () => {
-            alert(`${formatDateLabel(d)} at ${formatTimeLabel(hour, minute)}\n\nAvailable:\n- ${names.join("\n- ")}`);
-          });
-        }
+        // Countdown timer
+        let count = 5;
+        const countdownElement = document.getElementById('countdown');
+        const redirectUrl = 'https://carlosmada.github.io/Practice-Scheduler/';
 
-        row.appendChild(td);
-      });
+        const timer = setInterval(() => {
+            count--;
+            countdownElement.textContent = count;
+            
+            if (count <= 0) {
+                clearInterval(timer);
+                window.location.href = redirectUrl;
+            }
+        }, 1000);
 
-      tbody.appendChild(row);
-    });
-
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    groupGridEl.innerHTML = "";
-    groupGridEl.appendChild(table);
-
-    if (allUsers.length === 0) {
-      groupNoticeEl.textContent = "No responses yet. Ask people to fill out the 'Enter Availability' tab.";
-    } else {
-      const slotMapValues = Array.from(slotMap.values());
-      const anyFilled = slotMapValues.some((arr) => arr.length > 0);
-      groupNoticeEl.textContent = anyFilled
-        ? `Currently tracking ${allUsers.length} participant(s).`
-        : "Participants saved, but nobody has selected any slots yet.";
-    }
-  }
-
-  // ---------- INIT ----------
-  renderInputGrid();
-  renderGroupGrid();
-</script>
+        // Manual link click
+        document.getElementById('manualLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = redirectUrl;
+        });
+    </script>
 </body>
 </html>
